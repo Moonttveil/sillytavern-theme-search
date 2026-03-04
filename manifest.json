@@ -1,0 +1,8 @@
+{
+  "name": "theme-search",
+  "display_name": "Theme Search Bar",
+  "description": "Buscar temas por nombre y cambiar automáticamente.",
+  "version": "1.0.0",
+  "author": "TuNombre",
+  "entry": "index.js"
+}
