@@ -2,23 +2,23 @@ import { eventSource, event_types } from "../../../../script.js";
 
 eventSource.on(event_types.APP_READY, () => {
 
-    const wait = setInterval(() => {
+    const observer = new MutationObserver(() => {
 
         const themeSelect = document.querySelector("#themes");
 
         if (!themeSelect) return;
 
-        clearInterval(wait);
-
         // Evitar duplicados
         if (document.getElementById("theme-search-bar")) return;
+
+        console.log("Theme selector encontrado 👀");
 
         // Crear input
         const input = document.createElement("input");
         input.id = "theme-search-bar";
         input.type = "text";
         input.placeholder = "🔍 Buscar tema...";
-        
+
         input.style.width = "100%";
         input.style.marginBottom = "6px";
         input.style.padding = "6px";
@@ -27,7 +27,7 @@ eventSource.on(event_types.APP_READY, () => {
         input.style.color = "white";
         input.style.border = "1px solid #555";
 
-        // Insertar justo arriba del selector
+        // Insertar arriba del selector
         themeSelect.parentNode.insertBefore(input, themeSelect);
 
         // Filtrar opciones
@@ -44,7 +44,7 @@ eventSource.on(event_types.APP_READY, () => {
 
         });
 
-        // Selección automática
+        // ENTER = seleccionar primero visible
         input.addEventListener("keydown", (e) => {
 
             if (e.key === "Enter") {
@@ -60,6 +60,8 @@ eventSource.on(event_types.APP_READY, () => {
 
         });
 
-    }, 500);
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
 
 });
