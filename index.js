@@ -2,56 +2,64 @@ import { eventSource, event_types } from "../../../../script.js";
 
 eventSource.on(event_types.APP_READY, () => {
 
-    const waitForSelect = setInterval(() => {
+    const wait = setInterval(() => {
 
-        const selects = document.querySelectorAll("select");
-
-        if (!selects.length) return;
-
-        // Intentar encontrar el selector que tenga muchos temas
-        const themeSelect = Array.from(selects).find(s => s.options.length > 5);
+        const themeSelect = document.querySelector("#themes");
 
         if (!themeSelect) return;
 
-        clearInterval(waitForSelect);
+        clearInterval(wait);
 
-        // Crear buscador
-        const searchInput = document.createElement("input");
-        searchInput.type = "text";
-        searchInput.placeholder = "🔍 Buscar tema...";
-        searchInput.style.width = "100%";
-        searchInput.style.marginBottom = "8px";
-        searchInput.style.padding = "8px";
-        searchInput.style.borderRadius = "10px";
-        searchInput.style.background = "#222";
-        searchInput.style.color = "white";
-        searchInput.style.border = "1px solid #555";
+        // Evitar duplicados
+        if (document.getElementById("theme-search-bar")) return;
 
-        themeSelect.parentNode.insertBefore(searchInput, themeSelect);
+        // Crear input
+        const input = document.createElement("input");
+        input.id = "theme-search-bar";
+        input.type = "text";
+        input.placeholder = "🔍 Buscar tema...";
+        
+        input.style.width = "100%";
+        input.style.marginBottom = "6px";
+        input.style.padding = "6px";
+        input.style.borderRadius = "8px";
+        input.style.background = "#222";
+        input.style.color = "white";
+        input.style.border = "1px solid #555";
 
-        searchInput.addEventListener("input", () => {
+        // Insertar justo arriba del selector
+        themeSelect.parentNode.insertBefore(input, themeSelect);
 
-            const value = searchInput.value.toLowerCase();
+        // Filtrar opciones
+        input.addEventListener("input", () => {
+
+            const value = input.value.toLowerCase();
 
             Array.from(themeSelect.options).forEach(option => {
 
                 const text = option.text.toLowerCase();
-                const match = text.includes(value);
-
-                option.hidden = !match;
+                option.hidden = !text.includes(value);
 
             });
 
         });
 
-        // Cambio automático real
-        themeSelect.addEventListener("change", () => {
+        // Selección automática
+        input.addEventListener("keydown", (e) => {
 
-            themeSelect.dispatchEvent(new Event("input", { bubbles: true }));
-            themeSelect.dispatchEvent(new Event("change", { bubbles: true }));
+            if (e.key === "Enter") {
+
+                const visible = Array.from(themeSelect.options)
+                    .find(opt => !opt.hidden);
+
+                if (visible) {
+                    themeSelect.value = visible.value;
+                    themeSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                }
+            }
 
         });
 
-    }, 800);
+    }, 500);
 
 });
