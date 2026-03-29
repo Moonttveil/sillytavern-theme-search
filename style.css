@@ -1,0 +1,99 @@
+#theme-search-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+#theme-search-input {
+    width: 100%;
+    padding: 6px 32px 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--SmartThemeBorderColor, #555);
+    background: var(--SmartThemeBlurTintColor, #1a1a1a);
+    color: var(--SmartThemeBodyColor, #fff);
+    font-size: 0.9em;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#theme-search-input:focus {
+    border-color: var(--SmartThemeQuoteColor, #9b59b6);
+}
+
+#theme-search-input::placeholder {
+    color: var(--SmartThemeBodyColor, #aaa);
+    opacity: 0.5;
+}
+
+#theme-search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 0.85em;
+    display: none;
+    background: none;
+    border: none;
+    color: var(--SmartThemeBodyColor, #fff);
+    padding: 0;
+    line-height: 1;
+}
+
+#theme-search-clear:hover {
+    opacity: 1;
+}
+
+#theme-search-results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: var(--SmartThemeBlurTintColor, #1e1e1e);
+    border: 1px solid var(--SmartThemeBorderColor, #555);
+    border-radius: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    margin-top: 2px;
+}
+
+.theme-search-item {
+    padding: 7px 12px;
+    cursor: pointer;
+    font-size: 0.88em;
+    color: var(--SmartThemeBodyColor, #eee);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.theme-search-item:last-child {
+    border-bottom: none;
+}
+
+.theme-search-item:hover,
+.theme-search-item.active {
+    background: var(--SmartThemeQuoteColor, #9b59b6);
+    color: #fff;
+}
+
+.theme-search-item mark {
+    background: transparent;
+    color: #f0c040;
+    font-weight: bold;
+}
+
+#theme-search-count {
+    font-size: 0.75em;
+    opacity: 0.5;
+    text-align: right;
+    padding: 2px 4px 0 0;
+    color: var(--SmartThemeBodyColor, #aaa);
+}
