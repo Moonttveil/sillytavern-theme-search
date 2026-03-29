@@ -1,8 +1,12 @@
 {
-  "name": "theme-search",
-  "display_name": "Theme Search Bar",
-  "description": "Buscar temas por nombre y cambiar automáticamente.",
-  "version": "1.0.0",
-  "author": "TuNombre",
-  "entry": "index.js"
+    "display_name": "Theme Search",
+    "loading_order": 10,
+    "requires": [],
+    "optional": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "Moonttveil",
+    "version": "1.1.0",
+    "homePage": "https://github.com/Moonttveil/sillytavern-theme-search",
+    "auto_update": true
 }
