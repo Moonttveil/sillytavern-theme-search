@@ -1,21 +1,11 @@
-/**
- * SillyTavern Theme Search Extension
- * Author: Moonttveil
- * Description: Adds a real-time search bar above the theme selector in User Settings.
- *              Supports partial matching, CJK characters, and auto-applies the theme on selection.
- */
-
 (function () {
     'use strict';
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
-    /** Escape special regex characters in a string */
     function escapeRegex(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    /** Wrap matching parts of text with <mark> tags */
+
     function highlight(text, query) {
         if (!query) return document.createTextNode(text);
         const re = new RegExp(`(${escapeRegex(query)})`, 'gi');
@@ -34,26 +24,20 @@
         return frag;
     }
 
-    // ── Core: find the theme selector ────────────────────────────────────────
 
-    /**
-     * SillyTavern renders the theme selector as a <select> element.
-     * We try multiple selectors because the id/class can vary between versions.
-     */
     function getThemeSelect() {
-        // Most common: the settings panel select that lists .css theme files
+
         const candidates = [
             'select#themes',
             'select[name="themes"]',
-            '#user-settings-block select',   // generic fallback inside settings
+            '#user-settings-block select',   
         ];
         for (const sel of candidates) {
             const el = document.querySelector(sel);
             if (el && el.options.length > 1) return el;
         }
 
-        // Last resort: scan all selects on the page and pick the one whose
-        // options look like theme names (many of them, no plain numbers)
+ 
         const allSelects = Array.from(document.querySelectorAll('select'));
         return allSelects.find(sel => {
             const opts = Array.from(sel.options);
@@ -61,14 +45,14 @@
         }) || null;
     }
 
-    // ── Build the search UI ───────────────────────────────────────────────────
+ 
 
     function buildSearchUI(themeSelect) {
-        // --- wrapper ---
+   
         const wrapper = document.createElement('div');
         wrapper.id = 'theme-search-wrapper';
 
-        // --- input ---
+    
         const input = document.createElement('input');
         input.id = 'theme-search-input';
         input.type = 'text';
@@ -76,18 +60,18 @@
         input.autocomplete = 'off';
         input.spellcheck = false;
 
-        // --- clear button ---
+
         const clearBtn = document.createElement('button');
         clearBtn.id = 'theme-search-clear';
         clearBtn.textContent = '✕';
         clearBtn.title = 'Limpiar búsqueda';
         clearBtn.type = 'button';
 
-        // --- results dropdown ---
+
         const results = document.createElement('div');
         results.id = 'theme-search-results';
 
-        // --- small count label ---
+
         const count = document.createElement('div');
         count.id = 'theme-search-count';
 
@@ -95,18 +79,16 @@
         wrapper.appendChild(clearBtn);
         wrapper.appendChild(results);
 
-        // Insert wrapper BEFORE the theme <select>
+
         themeSelect.parentNode.insertBefore(wrapper, themeSelect);
         themeSelect.parentNode.insertBefore(count, themeSelect);
 
         return { input, clearBtn, results, count };
     }
 
-    // ── Logic ─────────────────────────────────────────────────────────────────
 
     function applyTheme(themeSelect, value) {
         themeSelect.value = value;
-        // Trigger both 'change' and 'input' so ST picks it up regardless of version
         themeSelect.dispatchEvent(new Event('change', { bubbles: true }));
         themeSelect.dispatchEvent(new Event('input', { bubbles: true }));
     }
@@ -130,7 +112,6 @@
                 !q || opt.text.toLowerCase().includes(q)
             );
 
-            // Update count label
             count.textContent = q
                 ? `${matched.length} coincidencia${matched.length !== 1 ? 's' : ''}`
                 : '';
@@ -147,7 +128,6 @@
                 item.appendChild(highlight(opt.text, q));
 
                 item.addEventListener('mousedown', e => {
-                    // mousedown instead of click so it fires before blur
                     e.preventDefault();
                     applyTheme(themeSelect, opt.value);
                     input.value = opt.text;
@@ -172,7 +152,6 @@
             target.scrollIntoView({ block: 'nearest' });
         }
 
-        // ── Events ────────────────────────────────────────────────────────────
 
         input.addEventListener('input', () => {
             const q = input.value;
@@ -204,7 +183,6 @@
         });
 
         input.addEventListener('blur', () => {
-            // Small delay so mousedown on items fires first
             setTimeout(() => { results.style.display = 'none'; }, 150);
         });
 
@@ -217,19 +195,17 @@
         });
     }
 
-    // ── Injection: wait for the settings panel to open ────────────────────────
 
     const INJECTION_ID = 'theme-search-wrapper';
     let injected = false;
 
     function tryInject() {
         if (injected && document.getElementById(INJECTION_ID)) return;
-        injected = false; // reset if it was removed (panel closed & reopened)
+        injected = false; 
 
         const themeSelect = getThemeSelect();
         if (!themeSelect) return;
 
-        // Avoid double-injection
         if (document.getElementById(INJECTION_ID)) return;
 
         console.log('[ThemeSearch] Theme selector found, injecting search bar…');
@@ -237,11 +213,9 @@
         injected = true;
     }
 
-    // Watch for DOM changes (ST renders the settings panel dynamically)
     const observer = new MutationObserver(() => tryInject());
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Also try immediately in case the panel is already open
     tryInject();
 
 })();
