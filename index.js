@@ -5,7 +5,6 @@
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-
     function highlight(text, query) {
         if (!query) return document.createTextNode(text);
         const re = new RegExp(`(${escapeRegex(query)})`, 'gi');
@@ -16,7 +15,7 @@
                 const mark = document.createElement('mark');
                 mark.textContent = part;
                 frag.appendChild(mark);
-                re.lastIndex = 0; // reset after test
+                re.lastIndex = 0;
             } else {
                 frag.appendChild(document.createTextNode(part));
             }
@@ -24,20 +23,18 @@
         return frag;
     }
 
-
     function getThemeSelect() {
 
         const candidates = [
             'select#themes',
             'select[name="themes"]',
-            '#user-settings-block select',   
+            '#user-settings-block select',
         ];
         for (const sel of candidates) {
             const el = document.querySelector(sel);
             if (el && el.options.length > 1) return el;
         }
 
- 
         const allSelects = Array.from(document.querySelectorAll('select'));
         return allSelects.find(sel => {
             const opts = Array.from(sel.options);
@@ -45,14 +42,13 @@
         }) || null;
     }
 
- 
 
     function buildSearchUI(themeSelect) {
-   
+
         const wrapper = document.createElement('div');
         wrapper.id = 'theme-search-wrapper';
 
-    
+
         const input = document.createElement('input');
         input.id = 'theme-search-input';
         input.type = 'text';
@@ -71,30 +67,27 @@
         const results = document.createElement('div');
         results.id = 'theme-search-results';
 
-
-        const count = document.createElement('div');
-        count.id = 'theme-search-count';
-
         wrapper.appendChild(input);
         wrapper.appendChild(clearBtn);
         wrapper.appendChild(results);
 
 
         themeSelect.parentNode.insertBefore(wrapper, themeSelect);
-        themeSelect.parentNode.insertBefore(count, themeSelect);
 
-        return { input, clearBtn, results, count };
+        return { input, clearBtn, results };
     }
+
 
 
     function applyTheme(themeSelect, value) {
         themeSelect.value = value;
+
         themeSelect.dispatchEvent(new Event('change', { bubbles: true }));
         themeSelect.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function initSearch(themeSelect) {
-        const { input, clearBtn, results, count } = buildSearchUI(themeSelect);
+        const { input, clearBtn, results } = buildSearchUI(themeSelect);
 
         let activeIndex = -1;
 
@@ -112,10 +105,6 @@
                 !q || opt.text.toLowerCase().includes(q)
             );
 
-            count.textContent = q
-                ? `${matched.length} coincidencia${matched.length !== 1 ? 's' : ''}`
-                : '';
-
             if (!q || matched.length === 0) {
                 results.style.display = 'none';
                 return;
@@ -128,12 +117,12 @@
                 item.appendChild(highlight(opt.text, q));
 
                 item.addEventListener('mousedown', e => {
+
                     e.preventDefault();
                     applyTheme(themeSelect, opt.value);
                     input.value = opt.text;
                     results.style.display = 'none';
                     clearBtn.style.display = 'inline';
-                    count.textContent = '';
                 });
 
                 results.appendChild(item);
@@ -171,7 +160,6 @@
                     applyTheme(themeSelect, target.dataset.value);
                     input.value = target.textContent;
                     results.style.display = 'none';
-                    count.textContent = '';
                 }
             } else if (e.key === 'Escape') {
                 results.style.display = 'none';
@@ -183,6 +171,7 @@
         });
 
         input.addEventListener('blur', () => {
+
             setTimeout(() => { results.style.display = 'none'; }, 150);
         });
 
@@ -190,7 +179,6 @@
             input.value = '';
             clearBtn.style.display = 'none';
             results.style.display = 'none';
-            count.textContent = '';
             input.focus();
         });
     }
@@ -201,10 +189,11 @@
 
     function tryInject() {
         if (injected && document.getElementById(INJECTION_ID)) return;
-        injected = false; 
+        injected = false;
 
         const themeSelect = getThemeSelect();
         if (!themeSelect) return;
+
 
         if (document.getElementById(INJECTION_ID)) return;
 
@@ -213,8 +202,10 @@
         injected = true;
     }
 
+
     const observer = new MutationObserver(() => tryInject());
     observer.observe(document.body, { childList: true, subtree: true });
+
 
     tryInject();
 
